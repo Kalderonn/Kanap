@@ -20,31 +20,23 @@ const getProductData = async () => {
 // Les éléments HTML
 const productImg = document.querySelector(".item__img");
 const productTitle = document.getElementById("title");
+const productPrice = document.getElementById("price");
 const productDescription = document.getElementById("description");
 const productOptions = document.getElementById("colors");
-// console.log(productImg);
-// console.log(productTitle);
-// console.log(productDescription);
-// console.log(productOptions);
+console.log(productDescription);
 
 // Affichage du produit
 
 const productDisplay = async () => {
   await getProductData();
-    productImg.innerHTML = `<img src="${productData.imageUrl}" alt="${productData.altText} ">`
-    productTitle.innerText = `${productData.name}`
-  //     productsData.forEach(
-  //         (product) =>
-  //     document.getElementById("items").innerHTML += `
-  //     <a href="./product.html?id=${product._id}">
-  //         <article>
-  //             <img src="${product.imageUrl}" alt="${product.altTxt}">
-  //             <h3 class="productName">${product.name}</h3>
-  //             <p class="productDescription">${product.description}</p>
-  //         </article>
-  //     </a>`
-  // // }
-  // );
+  productImg.innerHTML = `<img src="${productData.imageUrl}" alt="${productData.altText} ">`;
+  productTitle.innerText = `${productData.name}`;
+  productPrice.innerText = `${productData.price}`;
+  productDescription.innerText =`${productData.description}`;
+  productData.colors.forEach(color => {
+    productOptions.innerHTML += 
+    `<option value="${color}">${color}</option>`
+  });
 };
 
 productDisplay();
