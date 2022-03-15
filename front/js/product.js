@@ -26,8 +26,7 @@ const productTitle = document.getElementById("title");
 const productPrice = document.getElementById("price");
 const productDescription = document.getElementById("description");
 const productOptions = document.getElementById("colors");
-
-// console.log(productOptions)
+// console.log(productImg)
 
 // Affichage du produit
 const productDisplay = async () => {
@@ -82,7 +81,7 @@ const addToBasket = () => {
     let product = {
       id : addArticleId,
       colorSelected : color,
-      quantitySelected : quantity,
+      quantitySelected : parseInt(quantity),
     }
     // récupération du panier
     let basket = getLocalStorage()
