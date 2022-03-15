@@ -3,6 +3,7 @@ const saveLocalStorage = (basket) => {
   localStorage.setItem("basket", JSON.stringify(basket));
 };
 
+
 // Si mon local storage est vide modification du front, sinon parse mon localStorage
 const getLocalStorage = () => {
   let basket = localStorage.getItem("basket");
@@ -22,6 +23,8 @@ const getLocalStorage = () => {
   }
 };
 getLocalStorage();
+
+
 // Récupération des données de l'API
 const getProductsData = async () => {
   await fetch("http://localhost:3000/api/products")
@@ -30,6 +33,7 @@ const getProductsData = async () => {
       productsData = data;
     });
 };
+
 
 // Récupération des données basket + Api et injection dans la fonction basketDisplayTemplate
 const basketDisplay = async () => {
@@ -42,7 +46,6 @@ const basketDisplay = async () => {
   basketData.forEach((product) => {
     // Je fais un find sur productsDada(Api) des produits avec la meme Id pour récupérer les données et les stocker
     const foundSameId = productsData.find((id) => product.id === id._id);
-    console.log(foundSameId);
     // J'injecte les données du localStorage et de l'Api en paramètre dans la fonction basketDisplayTemplate
     basketDisplayTemplate(product, foundSameId);
   });
@@ -51,6 +54,7 @@ const basketDisplay = async () => {
 };
 
 basketDisplay();
+
 
 // affichage des éléments du panier
 const basketDisplayTemplate = (product, foundSameId) => {
@@ -83,74 +87,64 @@ const basketDisplayTemplate = (product, foundSameId) => {
 const removeProductbasket = () => {
   // je récupère mon panier
   let basket = getLocalStorage();
-  // console.log(basket);
   // je sélectionne dans le DOM le boutton supprimer
   const deleteBtn = document.querySelectorAll(".deleteItem");
-  // console.log(deleteBtn);
   // Pour chaque boutton supprimer
   deleteBtn.forEach((btn) => {
     // je stocke les données de l'élément parent article
     const deleteBtnParent = btn.closest("article");
-    console.log(deleteBtnParent);
     // J'ajoute un eventListener au click de tous les bouttons supprimer
     btn.addEventListener(`click`, (e) => {
+      // Je fais un find pour récupérer uniquement le produit que je souhaite supprimer du DOM
       const productDeleted = basket.find(
         (product) =>
           product.id === deleteBtnParent.dataset.id &&
           product.colorSelected === deleteBtnParent.dataset.color
       );
-      console.log(productDeleted);
+      // S'il le trouve, il le supprime du DOM
       if (productDeleted) {
-        // saveLocalStorage(newBasket);
         deleteBtnParent.remove();
       }
-      // Je filtre le panier du LocalStorage pour qu'il me renvoie un nouveau tableau qui remplit cette condition et je le stocke
+      // Je filtre le panier du LocalStorage pour qu'il me renvoie un nouveau tableau qui remplit cette condition
       basket = basket.filter(
         (productsInBasket) =>
           productsInBasket.id !== deleteBtnParent.dataset.id ||
           productsInBasket.colorSelected !== deleteBtnParent.dataset.color
       );
-      console.log(e);
-      console.log(basket);
       // Je sauvegarde mon nouveau panier que j'injecte dans la fonction saveLocalStorage
       saveLocalStorage(basket);
       getLocalStorage();
-      //Refresh
-      // location.reload();
     });
   });
 };
 
 // Modifier la quantité
 const modifyQuantity = () => {
+  // je récupère mon localStarage
   let basket = getLocalStorage();
-  // basket.forEach((product) =>{
-  //   product.quantitySelected += product.quantitySelected;
-  //   console.log(product.quantitySelected);
-  // })
-
+  // Je cible l'input du DOM qui dans  lequel l'utilisateur change la quantité
   const inputQuantity = document.querySelectorAll(".itemQuantity");
-  console.log(inputQuantity);
+  // Pour chaque input
   inputQuantity.forEach((input) => {
+    // Je récupère les éléments <article> parents
+    const inputQuantityParent = input.closest("article");
+    // J'écoute mes input au changement
     input.addEventListener("change", (e) => {
-      const quantityChange = e.target.value;
-
-      // let quantityProductBasket = basket.quantitySelected;
-      // console.log(quantityProductBasket);
-      console.log(quantityChange);
-      // console.log(e.inputQuantity.value)
+      // Je stocke la valeur modifée de l'input sélectionné
+      let quantityChange = e.target.value;
+      // Dans mon Basket, je récupère les données de mon produit par un find qui respecte cette condition
+      const resultFindIdAndColor = basket.find((p) => p.id == inputQuantityParent.dataset.id && p.colorSelected == inputQuantityParent.dataset.color);
+      // S'il le trouve, je modifie sa quantité avec la nouvelle valeur de l'input
+      if (resultFindIdAndColor) {
+        resultFindIdAndColor.quantitySelected = quantityChange
+      }
+      // Et je sauve dans mon localStorage
+      saveLocalStorage(basket)
     });
   });
 };
 
-// const productDeleted = basket.find(
-//   (product) =>
-//     product.id === deleteBtnParent.dataset.id &&
-//     product.colorSelected === deleteBtnParent.dataset.color
-// );
-// console.log(productDeleted);
-// if (productDeleted) {
-//   saveLocalStorage(newBasket);
-//   deleteBtnParent.remove();
-// }
-// console.log(e);
+  // basket.forEach((product) =>{
+  //   product.quantitySelected += product.quantitySelected;
+  //   console.log(product.quantitySelected);
+  // })
