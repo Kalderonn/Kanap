@@ -3,7 +3,6 @@ const saveLocalStorage = (basket) => {
   localStorage.setItem("basket", JSON.stringify(basket));
 };
 
-
 // Si mon local storage est vide modification du front, sinon parse mon localStorage
 const getLocalStorage = () => {
   let basket = localStorage.getItem("basket");
@@ -22,8 +21,6 @@ const getLocalStorage = () => {
     return JSON.parse(basket);
   }
 };
-getLocalStorage();
-
 
 // Récupération des données de l'API
 const getProductsData = async () => {
@@ -33,7 +30,6 @@ const getProductsData = async () => {
       productsData = data;
     });
 };
-
 
 // Récupération des données basket + Api et injection dans la fonction basketDisplayTemplate
 const basketDisplay = async () => {
@@ -54,7 +50,6 @@ const basketDisplay = async () => {
 };
 
 basketDisplay();
-
 
 // affichage des éléments du panier
 const basketDisplayTemplate = (product, foundSameId) => {
@@ -81,7 +76,6 @@ const basketDisplayTemplate = (product, foundSameId) => {
             </div>
         </article>`;
 };
-// basketProductData();
 
 // Supprimer un produit
 const removeProductbasket = () => {
@@ -101,6 +95,7 @@ const removeProductbasket = () => {
           product.id === deleteBtnParent.dataset.id &&
           product.colorSelected === deleteBtnParent.dataset.color
       );
+      console.log(productDeleted);
       // S'il le trouve, il le supprime du DOM
       if (productDeleted) {
         deleteBtnParent.remove();
@@ -111,12 +106,17 @@ const removeProductbasket = () => {
           productsInBasket.id !== deleteBtnParent.dataset.id ||
           productsInBasket.colorSelected !== deleteBtnParent.dataset.color
       );
+      console.log(basket)
       // Je sauvegarde mon nouveau panier que j'injecte dans la fonction saveLocalStorage
       saveLocalStorage(basket);
       getLocalStorage();
+      modifyQuantity()
+      totalQuantity();
+      totalPrice()
     });
   });
 };
+// removeProductbasket()
 
 // Modifier la quantité
 const modifyQuantity = () => {
@@ -128,23 +128,56 @@ const modifyQuantity = () => {
   inputQuantity.forEach((input) => {
     // Je récupère les éléments <article> parents
     const inputQuantityParent = input.closest("article");
-    // J'écoute mes input au changement
+    // J'écoute mes inputs au changement
     input.addEventListener("change", (e) => {
-      // Je stocke la valeur modifée de l'input sélectionné
+      // Je stocke la valeur modifée de l'input "en focus"
       let quantityChange = e.target.value;
       // Dans mon Basket, je récupère les données de mon produit par un find qui respecte cette condition
-      const resultFindIdAndColor = basket.find((p) => p.id == inputQuantityParent.dataset.id && p.colorSelected == inputQuantityParent.dataset.color);
+      const resultFindIdAndColor = basket.find(
+        (p) =>
+          p.id === inputQuantityParent.dataset.id &&
+          p.colorSelected === inputQuantityParent.dataset.color
+      );
+      console.log(resultFindIdAndColor)
       // S'il le trouve, je modifie sa quantité avec la nouvelle valeur de l'input
       if (resultFindIdAndColor) {
-        resultFindIdAndColor.quantitySelected = quantityChange
+        resultFindIdAndColor.quantitySelected = parseInt(quantityChange);
       }
       // Et je sauve dans mon localStorage
-      saveLocalStorage(basket)
+      saveLocalStorage(basket);
+      getLocalStorage();
+      totalQuantity();
+      totalPrice();
     });
   });
 };
+// modifyQuantity()
+// Calcule du nombre total d'articles
+const totalQuantity = () => {
+  const basket = getLocalStorage();
+  const totalProduct = document.getElementById("totalQuantity");
+  console.log(totalProduct);
+  let quantityTotal = 0;
+  basket.forEach((product) => {
+    quantityTotal += parseInt(product.quantitySelected);
+  });
+  totalProduct.innerText = quantityTotal;
+  console.log(quantityTotal);
+};
+totalQuantity();
 
-  // basket.forEach((product) =>{
-  //   product.quantitySelected += product.quantitySelected;
-  //   console.log(product.quantitySelected);
-  // })
+// Calcule du prix total
+const totalPrice = async () => {
+  const basket = getLocalStorage();
+  await getProductsData();
+  const priceBasket = document.getElementById("totalPrice");
+  let total = 0;
+  basket.forEach((product) => {
+    const foundSameId = productsData.find((id) => product.id === id._id);
+    total += parseInt(product.quantitySelected) * parseInt(foundSameId.price);
+  });
+  priceBasket.innerText = total;
+  console.log(total);
+};
+
+totalPrice();
