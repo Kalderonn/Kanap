@@ -150,6 +150,7 @@ const modifyQuantity = () => {
     });
   });
 };
+
 // Calcule du nombre total d'articles
 const totalQuantity = () => {
   const basket = getLocalStorage();
@@ -180,125 +181,128 @@ const totalPrice = async () => {
 
 totalPrice();
 
-// Validation du formulaire
+// Envoi des infos client
+const postForm = () => {
+  const basket = getLocalStorage();
+  console.log(basket);
 
+  const form = document.querySelector(".cart__order__form");
+  // e.preventDefault();
+
+  // je récupère les données du formulaire dans un objet
+  const infosClient = {
+    firstName: form.firstName.value,
+    lastName: form.lastName.value,
+    address: form.address.value,
+    city: form.city.value,
+    email: form.email.value,
+  };
+  console.log(infosClient);
+};
+
+// Validation du formulaire
 const validForm = () => {
   // Récupération du formulaire
   const form = document.querySelector(".cart__order__form");
 
-  // Création RegExp pour l'email
-  const emailRegExp = new RegExp(
-    "^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,10}$",
-    ""
-  );
-  // Création RegExp pour firstName, lastName, city
-  const noNumberRegExp = new RegExp(
-    "^[A-Za-z\-âäçèéêëï]{3,}$",
-    ""
-  );
-  // Création RegExp pour l'address
-  const addressRegExp = new RegExp(
-    "^([0-9]*) ?([a-zA-Zâäçèéêëï,\-\. ]*) ?([0-9]{5}) ?$",
-    ""
-  );
-  
-  // Ecoute de la modification de firstName
-  form.firstName.addEventListener("change", (inputFirstName) => {
-    // console.log(inputFirstName.target.value);
-    validFirstName(inputFirstName.target.value, noNumberRegExp);
-  });
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
 
-  // Ecoute de la modification de lastName
-  form.lastName.addEventListener("change", (inputLastName) => {
-    // console.log(inputLastName.target.value);
-    validLastName(inputLastName.target.value, noNumberRegExp);
-  });
+    // récupération des valeurs des différents inputs du formulaire
+    const firstNameInput = form.firstName.value;
+    const lastNameInput = form.lastName.value;
+    const addressInput = form.address.value;
+    const cityInput = form.city.value;
+    const emailInput = form.email.value;
 
-  // Ecoute de la modification de address
-  form.address.addEventListener("change", (inputAddress) => {
-    // console.log(inputAddress.target.value);
-    validAddress(inputAddress.target.value,addressRegExp);
-  });
+    // Création RegExp pour l'email
+    const emailRegExp = new RegExp(
+      "^[a-zA-Z0-9.\-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,10}$",
+      ""
+    );
+    // Création RegExp pour firstName, lastName, city
+    const noNumberRegExp = new RegExp("^[A-Za-z-À-ÖØ-öø-ÿ]{3,}$", "");
+    // Création RegExp pour l'address
+    const addressRegExp = new RegExp(
+      "^([0-9]*)([a-zA-ZÀ-ÖØ-öø-ÿ,-. ]{3,})([0-9]{5})$",
+      ""
+    );
+    // récupération des résultats des tests RegExp
+    const testFirstName = noNumberRegExp.test(firstNameInput);
+    const testLastName = noNumberRegExp.test(lastNameInput);
+    const testAddress = addressRegExp.test(addressInput);
+    const testCity = noNumberRegExp.test(cityInput);
+    const testEmail = emailRegExp.test(emailInput);
+    // console.log(testFirstName)
 
-  // Ecoute de la modification de city
-  form.city.addEventListener("change", (inputCity) => {
-    // console.log(inputCity.target.value);
-    validCity(inputCity.target.value, noNumberRegExp);
-  });
+    // Validation du prénom
+    const validFirstName = () => {
+      const errorFirstNameMsg = document.getElementById("firstNameErrorMsg");
+      if (testFirstName === true) {
+        errorFirstNameMsg.innerHTML = "";
+        return true;
+      } else {
+        errorFirstNameMsg.innerHTML = "veuillez saisir votre prénom svp.";
+        // e.preventDefault();
+      }
+    };
+    // Validation du Nom
+    const validLastName = () => {
+      const errorLastNameMsg = document.getElementById("lastNameErrorMsg");
+      if (testLastName === true) {
+        errorLastNameMsg.innerHTML = "";
+        return true;
+      } else {
+        errorLastNameMsg.innerHTML = "veuillez saisir votre nom svp.";
+        // e.preventDefault();
+      }
+    };
+    // Validation de l'adresse
+    const validAddress = () => {
+      const errorAddressMsg = document.getElementById("addressErrorMsg");
+      if (testAddress === true) {
+        errorAddressMsg.innerHTML = "";
+        return true;
+      } else {
+        errorAddressMsg.innerHTML =
+          "veuillez saisir votre adresse avec votre code postal svp.";
+        // e.preventDefault();
+      }
+    };
+    // validation de la ville
+    const validCity = () => {
+      const errorCityMsg = document.getElementById("cityErrorMsg");
+      if (testCity === true) {
+        errorCityMsg.innerHTML = "";
+        return true;
+      } else {
+        errorCityMsg.innerHTML = "veuillez saisir votre ville svp.";
+        // e.preventDefault();
+      }
+    };
+    // Validation de l'email
+    const validEmail = () => {
+      const errorEmailMsg = document.getElementById("emailErrorMsg");
+      if (testEmail === true) {
+        errorEmailMsg.innerHTML = "";
+        return true;
+      } else {
+        errorEmailMsg.innerHTML = "veuillez saisir votre email svp.";
+        // e.preventDefault();
+      }
+    };
 
-  // Ecoute de la modification de l'email
-  form.email.addEventListener("change", (inputEmail) => {
-    // console.log(inputEmail.target.value);
-    validEmail(inputEmail.target.value, emailRegExp);
+    validFirstName();
+    validLastName();
+    validAddress();
+    validCity();
+    validEmail();
+
+    if ((validFirstName() && validLastName() && validAddress() && validCity() && validEmail()) === true) {
+      postForm()
+    }
   });
 };
 validForm();
 
-// validation du firstName
-const validFirstName = (inputFirstName,addressRegExp) => {
-  // Récupèration du résultat du test de la valeur de firstName en fonction du regExp
-  const testFirstName = addressRegExp.test(inputFirstName);
-  // Récupération de l'element HTML à modifier en cas d'erreur
-  const errorFirstNameMsg = document.getElementById("firstNameErrorMsg");
-  // Condition en fonction du resultat du test
-  if (testFirstName) {
-    errorFirstNameMsg.innerHTML = ""
-  } else {
-    errorFirstNameMsg.innerHTML = "veuillez saisir votre prénom svp.";
-  }
-};
-
-// validation du lastName
-const validLastName = (inputLastName,noNumberRegExp) => {
-  // Récupèration du résultat du test de la valeur de l'inputLastName en fonction du regExp
-  const testLastName = noNumberRegExp.test(inputLastName);
-  // Récupération de l'element HTML à modifier en cas d'erreur
-  const errorLastNameMsg = document.getElementById("lastNameErrorMsg");
-  // Condition en fonction du resultat du test
-  if (testLastName) {
-    errorLastNameMsg.innerHTML = ""
-  } else {
-    errorLastNameMsg.innerHTML = "veuillez saisir votre nom svp.";
-  }
-};
-// validation de l'adresse
-const validAddress = (inputAddress,noNumberRegExp) => {
-  // Récupèration du résultat du test de la valeur de l'address en fonction du regExp
-  const testAddress = noNumberRegExp.test(inputAddress);
-  // Récupération de l'element HTML à modifier en cas d'erreur
-  const errorAddressMsg = document.getElementById("addressErrorMsg");
-  // Condition en fonction du resultat du test
-  if (testAddress) {
-    errorAddressMsg.innerHTML = ""
-  } else {
-    errorAddressMsg.innerHTML = "veuillez saisir votre adresse svp.";
-  }
-};
-
-// validation de city
-const validCity = (inputCity,noNumberRegExp) => {
-  // Récupèration du résultat du test de la valeur de city en fonction du regExp
-  const testCity = noNumberRegExp.test(inputCity);
-  // Récupération de l'element HTML à modifier en cas d'erreur
-  const errorCityMsg = document.getElementById("cityErrorMsg");
-  // Condition en fonction du resultat du test
-  if (testCity) {
-    errorCityMsg.innerHTML = ""
-  } else {
-    errorCityMsg.innerHTML = "veuillez saisir votre ville svp.";
-  }
-};
-
-// validation de l'email
-const validEmail = (inputEmail,emailRegExp) => {
-  // Récupèration du résultat du test de la valeur de l'inputEmail en fonction du regExp
-  const testEmail = emailRegExp.test(inputEmail);
-  // Récupération de l'element HTML à modifier en cas d'erreur
-  const errorEmailMsg = document.getElementById("emailErrorMsg");
-  // Condition en fonction du resultat du test
-  if (testEmail) {
-    errorEmailMsg.innerHTML = "";
-  } else {
-    errorEmailMsg.innerHTML = "veuillez saisir votre email svp.";
-  }
-};
+// postForm();
