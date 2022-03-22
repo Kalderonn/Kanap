@@ -183,11 +183,8 @@ totalPrice();
 
 // Envoi des infos client
 const postForm = () => {
-  const basket = getLocalStorage();
-  console.log(basket);
-
+  // Je pointe mon formulaire
   const form = document.querySelector(".cart__order__form");
-  // e.preventDefault();
 
   // je récupère les données du formulaire dans un objet
   const infosClient = {
@@ -198,14 +195,56 @@ const postForm = () => {
     email: form.email.value,
   };
   console.log(infosClient);
+
+  // Je récupère mon panier
+  const basket = getLocalStorage();
+  console.log(basket);
+
+  // Construction du tableau d'Id du panier
+  let productsId = [];
+  basket.forEach(product => {
+    productsId.push(product.id)
+  });
+  console.log(productsId);
+
+  // La requète POST doit contenir un objet contact et un tableau d'Id de produits
+  const contactAndProducts = {
+    contact : infosClient,
+    products : productsId,
+  }
+  console.log(contactAndProducts);
+
+  // requète POST API
+  const postApi = () => {
+    fetch("http://localhost:3000/api/products/order", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+      },
+      body: JSON.stringify(contactAndProducts)
+    })
+    .then((res) => res.json())
+    .then((orderData) => {
+      console.log(orderData);
+      // redirection vers la page de confirmation en injectant l'ID de commande dans l'URL
+      window.location.href=`confirmation.html?orderId=${orderData.orderId}`
+    });
+  }
+  postApi()
 };
+
+
+
+
 
 // Validation du formulaire
 const validForm = () => {
   // Récupération du formulaire
   const form = document.querySelector(".cart__order__form");
-
+  // Ecoute des evenements du bouton submit
   form.addEventListener("submit", (e) => {
+    // Désactivation du comportement par défaut
     e.preventDefault();
 
     // récupération des valeurs des différents inputs du formulaire
@@ -217,16 +256,15 @@ const validForm = () => {
 
     // Création RegExp pour l'email
     const emailRegExp = new RegExp(
-      "^[a-zA-Z0-9.\-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,10}$",
-      ""
+      "^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,10}$"
     );
     // Création RegExp pour firstName, lastName, city
-    const noNumberRegExp = new RegExp("^[A-Za-z-À-ÖØ-öø-ÿ]{3,}$", "");
+    const noNumberRegExp = new RegExp("^[A-Za-z-À-ÖØ-öø-ÿ]{3,}$");
     // Création RegExp pour l'address
     const addressRegExp = new RegExp(
-      "^([0-9]*)([a-zA-ZÀ-ÖØ-öø-ÿ,-. ]{3,})([0-9]{5})$",
-      ""
+      "^([0-9]*)([a-zA-ZÀ-ÖØ-öø-ÿ,-. ]{3,})([0-9]{5})$"
     );
+
     // récupération des résultats des tests RegExp
     const testFirstName = noNumberRegExp.test(firstNameInput);
     const testLastName = noNumberRegExp.test(lastNameInput);
@@ -236,70 +274,54 @@ const validForm = () => {
     // console.log(testFirstName)
 
     // Validation du prénom
-    const validFirstName = () => {
-      const errorFirstNameMsg = document.getElementById("firstNameErrorMsg");
-      if (testFirstName === true) {
-        errorFirstNameMsg.innerHTML = "";
-        return true;
-      } else {
-        errorFirstNameMsg.innerHTML = "veuillez saisir votre prénom svp.";
-        // e.preventDefault();
-      }
-    };
+    const errorFirstNameMsg = document.getElementById("firstNameErrorMsg");
+    if (testFirstName === true) {
+      errorFirstNameMsg.innerHTML = "";
+    } else {
+      errorFirstNameMsg.innerHTML = "veuillez saisir votre prénom svp.";
+    }
+
     // Validation du Nom
-    const validLastName = () => {
-      const errorLastNameMsg = document.getElementById("lastNameErrorMsg");
-      if (testLastName === true) {
-        errorLastNameMsg.innerHTML = "";
-        return true;
-      } else {
-        errorLastNameMsg.innerHTML = "veuillez saisir votre nom svp.";
-        // e.preventDefault();
-      }
-    };
+    const errorLastNameMsg = document.getElementById("lastNameErrorMsg");
+    if (testLastName === true) {
+      errorLastNameMsg.innerHTML = "";
+    } else {
+      errorLastNameMsg.innerHTML = "veuillez saisir votre nom svp.";
+    }
+
     // Validation de l'adresse
-    const validAddress = () => {
-      const errorAddressMsg = document.getElementById("addressErrorMsg");
-      if (testAddress === true) {
-        errorAddressMsg.innerHTML = "";
-        return true;
-      } else {
-        errorAddressMsg.innerHTML =
-          "veuillez saisir votre adresse avec votre code postal svp.";
-        // e.preventDefault();
-      }
-    };
+    const errorAddressMsg = document.getElementById("addressErrorMsg");
+    if (testAddress === true) {
+      errorAddressMsg.innerHTML = "";
+    } else {
+      errorAddressMsg.innerHTML =
+        "veuillez saisir votre adresse avec votre code postal svp.";
+    }
+
     // validation de la ville
-    const validCity = () => {
-      const errorCityMsg = document.getElementById("cityErrorMsg");
-      if (testCity === true) {
-        errorCityMsg.innerHTML = "";
-        return true;
-      } else {
-        errorCityMsg.innerHTML = "veuillez saisir votre ville svp.";
-        // e.preventDefault();
-      }
-    };
+    const errorCityMsg = document.getElementById("cityErrorMsg");
+    if (testCity === true) {
+      errorCityMsg.innerHTML = "";
+    } else {
+      errorCityMsg.innerHTML = "veuillez saisir votre ville svp.";
+    }
+    
     // Validation de l'email
-    const validEmail = () => {
-      const errorEmailMsg = document.getElementById("emailErrorMsg");
-      if (testEmail === true) {
-        errorEmailMsg.innerHTML = "";
-        return true;
-      } else {
-        errorEmailMsg.innerHTML = "veuillez saisir votre email svp.";
-        // e.preventDefault();
-      }
-    };
+    const errorEmailMsg = document.getElementById("emailErrorMsg");
+    if (testEmail === true) {
+      errorEmailMsg.innerHTML = "";
+    } else {
+      errorEmailMsg.innerHTML = "veuillez saisir votre email svp.";
+    }
 
-    validFirstName();
-    validLastName();
-    validAddress();
-    validCity();
-    validEmail();
-
-    if ((validFirstName() && validLastName() && validAddress() && validCity() && validEmail()) === true) {
-      postForm()
+    if (
+      (testFirstName &&
+        testLastName &&
+        testAddress &&
+        testCity &&
+        testEmail) === true
+    ) {
+      postForm();
     }
   });
 };
