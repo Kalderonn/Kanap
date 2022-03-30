@@ -15,6 +15,10 @@ const getProductData = async () => {
     .then((data) => {
       productData = data;
       console.log(productData);
+    })
+    .catch((err) => {
+      document.querySelector(".item").innerHTML = `<h1>Notre site est momentanément indisponible</h1>`
+      console.log(err);
     });
   };
 

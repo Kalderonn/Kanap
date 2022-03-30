@@ -7,6 +7,10 @@ const getProductsData = async () => {
     .then((data) => {
       productsData = data;
     //   console.log(productsData);
+    })
+    .catch((err) => {
+      document.querySelector(".titles").innerHTML = `<h1>Notre site est momentanément indisponible</h1>`
+      console.log(err);
     });
 };
 

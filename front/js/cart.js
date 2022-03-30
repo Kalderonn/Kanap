@@ -229,6 +229,10 @@ const postForm = () => {
       console.log(orderData);
       // redirection vers la page de confirmation en injectant l'ID de commande dans l'URL
       window.location.href=`confirmation.html?orderId=${orderData.orderId}`
+    })
+    .catch((err) => {
+      alert("Notre service de commande est temporairement indisponible, veuillez nous contacter par téléphone ou par mail");
+      console.log(err);
     });
   }
   postApi()
@@ -326,5 +330,3 @@ const validForm = () => {
   });
 };
 validForm();
-
-// postForm();
