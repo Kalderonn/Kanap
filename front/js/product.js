@@ -6,7 +6,6 @@ const getId = (idParams) => {
 }
 
 const addArticleId = getId("id");
-// console.log(addArticleId);
 
 // récupération des infos du produit en fonction de l'ID
 const getProductData = async () => {
@@ -30,7 +29,6 @@ const productTitle = document.getElementById("title");
 const productPrice = document.getElementById("price");
 const productDescription = document.getElementById("description");
 const productOptions = document.getElementById("colors");
-// console.log(productImg)
 
 // Affichage du produit
 const productDisplay = async () => {
@@ -61,7 +59,8 @@ const addToBasketBtn = document.getElementById("addToCart");
 const saveLocalStorage = (basket) => {
   localStorage.setItem("basket", JSON.stringify(basket));
 }
-// retourne la valeur associée à la clé basket transformé en objet
+
+// Récupération des données du panier
 const getLocalStorage = () => {
   let basket = localStorage.getItem("basket");
   // si le basket n'éxiste pas getItem retourne un null
@@ -72,15 +71,14 @@ const getLocalStorage = () => {
     return JSON.parse(basket);
   }
 }
+
 // Ajout au panier
 const addToBasket = () => {
   // on écoute les evenements au clic du bouton "ajouter au panier"
   addToBasketBtn.addEventListener(`click`, (e) => {
-    console.log(e);
     // on récupère les valeurs de quantité et couleur
     let quantity = productQuantity.value;
     let color = productOptions.value;
-    // console.log(color)
     // création de l'objet produit qui sera push dans le LocalStorage
     let product = {
       id : addArticleId,
@@ -95,14 +93,15 @@ const addToBasket = () => {
     } else {
       // Ajout d'une variable contenant le résultat de la recherche en fonction de la condition
     const resultFindIdAndColor = basket.find((p) => p.id == addArticleId && p.colorSelected == color);
-    // Si On trouve un produit qui a déjà la même ID et couleur on ajout la nouvelle quantité avec celle déjà présente
+    // Si On trouve un produit qui a déjà la même ID et couleur on ajoute la nouvelle quantité avec celle déjà présente
     if (resultFindIdAndColor) {
       let newQuantity = parseInt(quantity) + parseInt(resultFindIdAndColor.quantitySelected);
       resultFindIdAndColor.quantitySelected = newQuantity;
-      // console.log(newQuantity);
+      alert("la quantité a été modifié dans le panier")
     } else {
       // Je push le product dans le panier = tableau
       basket.push(product);
+      alert("le produit a été ajouté au panier")
     }
     // Je sauvegarde le panier
     saveLocalStorage(basket);
@@ -111,37 +110,3 @@ const addToBasket = () => {
 }
 
 addToBasket();
-
-
-// récupération de la valeur de la couleur
-// productOptions.addEventListener(`change`, (e) =>{
-//   console.log(e.target.value);
-// })
-
-// productQuantity.addEventListener(`input`, (e) =>{
-//   console.log(e.target.value)
-// })
-// const saveProductStorage = async () => {
-//   await getProductData();
-//   const objet = {
-//     quantite: 234,
-//     nom: `${productData.name}`
-//   };
-//   console.log(objet)
-//   let basket = [objet]
-//   const objet2 = {
-//     quantite: 235,
-//     nom: `${productData.name}`
-//   };
-//     basket = [...basket, objet2];
-//   localStorage.setItem("basket", JSON.stringify(basket));
-// }
-
-// const getProductStorage = async () => {
-//   await saveProductStorage();
-//   JSON.parse(localStorage.getItem("basket"));
-//   console.log(JSON.parse(localStorage.getItem("basket")));
-// }
-
-// saveProductStorage()
-// getProductStorage()

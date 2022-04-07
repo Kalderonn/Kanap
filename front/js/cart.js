@@ -35,7 +35,6 @@ const getProductsData = async () => {
 const basketDisplay = async () => {
   // je récupère les données de mon localStorage
   let basketData = getLocalStorage();
-  console.log(basketData);
   // Je récupère les données de l'Api
   await getProductsData();
   // Pour chaque produit dans le LocalStorage
@@ -95,7 +94,6 @@ const removeProductbasket = () => {
           product.id === deleteBtnParent.dataset.id &&
           product.colorSelected === deleteBtnParent.dataset.color
       );
-      console.log(productDeleted);
       // S'il le trouve, il le supprime du DOM
       if (productDeleted) {
         deleteBtnParent.remove();
@@ -106,7 +104,6 @@ const removeProductbasket = () => {
           productsInBasket.id !== deleteBtnParent.dataset.id ||
           productsInBasket.colorSelected !== deleteBtnParent.dataset.color
       );
-      console.log(basket);
       // Je sauvegarde mon nouveau panier que j'injecte dans la fonction saveLocalStorage
       saveLocalStorage(basket);
       getLocalStorage();
@@ -137,7 +134,6 @@ const modifyQuantity = () => {
           p.id === inputQuantityParent.dataset.id &&
           p.colorSelected === inputQuantityParent.dataset.color
       );
-      console.log(resultFindIdAndColor);
       // S'il le trouve, je modifie sa quantité avec la nouvelle valeur de l'input
       if (resultFindIdAndColor) {
         resultFindIdAndColor.quantitySelected = parseInt(quantityChange);
@@ -194,25 +190,21 @@ const postForm = () => {
     city: form.city.value,
     email: form.email.value,
   };
-  console.log(infosClient);
 
   // Je récupère mon panier
   const basket = getLocalStorage();
-  console.log(basket);
 
   // Construction du tableau d'Id du panier
   let productsId = [];
-  basket.forEach(product => {
-    productsId.push(product.id)
+  basket.forEach((product) => {
+    productsId.push(product.id);
   });
-  console.log(productsId);
 
   // La requète POST doit contenir un objet contact et un tableau d'Id de produits
   const contactAndProducts = {
-    contact : infosClient,
-    products : productsId,
-  }
-  console.log(contactAndProducts);
+    contact: infosClient,
+    products: productsId,
+  };
 
   // requète POST API
   const postApi = () => {
@@ -222,25 +214,22 @@ const postForm = () => {
         "Content-Type": "application/json",
         "Accept": "application/json",
       },
-      body: JSON.stringify(contactAndProducts)
+      body: JSON.stringify(contactAndProducts),
     })
-    .then((res) => res.json())
-    .then((orderData) => {
-      console.log(orderData);
-      // redirection vers la page de confirmation en injectant l'ID de commande dans l'URL
-      window.location.href=`confirmation.html?orderId=${orderData.orderId}`
-    })
-    .catch((err) => {
-      alert("Notre service de commande est temporairement indisponible, veuillez nous contacter par téléphone ou par mail");
-      console.log(err);
-    });
-  }
-  postApi()
+      .then((res) => res.json())
+      .then((orderData) => {
+        // redirection vers la page de confirmation en injectant l'ID de commande dans l'URL
+        window.location.href = `confirmation.html?orderId=${orderData.orderId}`;
+      })
+      .catch((err) => {
+        alert(
+          "Notre service de commande est temporairement indisponible, veuillez nous contacter par téléphone ou par mail"
+        );
+        console.log(err);
+      });
+  };
+  postApi();
 };
-
-
-
-
 
 // Validation du formulaire
 const validForm = () => {
@@ -259,15 +248,11 @@ const validForm = () => {
     const emailInput = form.email.value;
 
     // Création RegExp pour l'email
-    const emailRegExp = new RegExp(
-      "^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,10}$"
-    );
+    const emailRegExp = new RegExp("^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,10}$");
     // Création RegExp pour firstName, lastName, city
     const noNumberRegExp = new RegExp("^[A-Za-z-À-ÖØ-öø-ÿ]{3,}$");
     // Création RegExp pour l'address
-    const addressRegExp = new RegExp(
-      "^([0-9]*)([a-zA-ZÀ-ÖØ-öø-ÿ,-. ]{3,})([0-9]{5})$"
-    );
+    const addressRegExp = new RegExp("^([0-9]*)([a-zA-ZÀ-ÖØ-öø-ÿ,-. ]{3,})([0-9]{5})$");
 
     // récupération des résultats des tests RegExp
     const testFirstName = noNumberRegExp.test(firstNameInput);
@@ -275,7 +260,6 @@ const validForm = () => {
     const testAddress = addressRegExp.test(addressInput);
     const testCity = noNumberRegExp.test(cityInput);
     const testEmail = emailRegExp.test(emailInput);
-    // console.log(testFirstName)
 
     // Validation du prénom
     const errorFirstNameMsg = document.getElementById("firstNameErrorMsg");
@@ -309,7 +293,7 @@ const validForm = () => {
     } else {
       errorCityMsg.innerHTML = "veuillez saisir votre ville svp.";
     }
-    
+
     // Validation de l'email
     const errorEmailMsg = document.getElementById("emailErrorMsg");
     if (testEmail === true) {
@@ -318,13 +302,7 @@ const validForm = () => {
       errorEmailMsg.innerHTML = "veuillez saisir votre email svp.";
     }
 
-    if (
-      (testFirstName &&
-        testLastName &&
-        testAddress &&
-        testCity &&
-        testEmail) === true
-    ) {
+    if ((testFirstName && testLastName && testAddress && testCity && testEmail) === true) {
       postForm();
     }
   });

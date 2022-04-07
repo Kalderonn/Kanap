@@ -1,12 +1,10 @@
-let productsData = [];
-
 // Récupération des données de l'API
 const getProductsData = async () => {
   await fetch("http://localhost:3000/api/products")
     .then((res) => res.json())
     .then((data) => {
       productsData = data;
-    //   console.log(productsData);
+      console.log(productsData)
     })
     .catch((err) => {
       document.querySelector(".titles").innerHTML = `<h1>Notre site est momentanément indisponible</h1>`
@@ -14,7 +12,7 @@ const getProductsData = async () => {
     });
 };
 
-// Affichage des cards de manière dynamique
+// Affichage des cards produit de manière dynamique
 const productsDisplay = async () => {
   await getProductsData();
   productsData.forEach(
@@ -30,5 +28,4 @@ const productsDisplay = async () => {
   );
 };
 
-getProductsData();
 productsDisplay();

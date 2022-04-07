@@ -1,5 +1,5 @@
 // Je vide mon local Storage
-// localStorage.clear();
+localStorage.clear();
 
 // recupération de l'ID de commande dans l'URL
 const getId = (idParams) => {
@@ -9,7 +9,6 @@ const getId = (idParams) => {
 };
 // Je stocke l'ID de commande
 const addOrderId = getId("orderId");
-console.log(addOrderId);
 
 const displayOrderId = () =>{
     // récupération de l'élément du DOM à modifier
