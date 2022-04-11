@@ -13,7 +13,6 @@ const getProductData = async () => {
     .then((res) => res.json())
     .then((data) => {
       productData = data;
-      console.log(productData);
     })
     .catch((err) => {
       document.querySelector(".item").innerHTML = `<h1>Notre site est momentanément indisponible</h1>`
