@@ -87,8 +87,8 @@ const addToBasket = () => {
     // récupération du panier
     let basket = getLocalStorage()
     // je rajoute une condition pour ne pas stocker dans le LocalStorage un produit qui à 0 quantité ou sans couleur sélectionnée
-    if (quantity == 0 || color == "") {
-      alert('veuillez choisir une quantité et une couleur')
+    if (quantity <= 0 || color == "") {
+      alert('veuillez choisir au minimum un article et une couleur svp')
     } else {
       // Ajout d'une variable contenant le résultat de la recherche en fonction de la condition
     const resultFindIdAndColor = basket.find((p) => p.id == addArticleId && p.colorSelected == color);

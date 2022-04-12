@@ -128,7 +128,8 @@ const modifyQuantity = () => {
     input.addEventListener("change", (e) => {
       // Je stocke la valeur modifée de l'input "en focus"
       let quantityChange = e.target.value;
-      // Dans mon Basket, je récupère les données de mon produit par un find qui respecte cette condition
+      if (quantityChange > 0) {
+        // Dans mon Basket, je récupère les données de mon produit par un find qui respecte cette condition
       const resultFindIdAndColor = basket.find(
         (p) =>
           p.id === inputQuantityParent.dataset.id &&
@@ -143,6 +144,10 @@ const modifyQuantity = () => {
       getLocalStorage();
       totalQuantity();
       totalPrice();
+      } else{
+        alert("Veuillez sélectionner une quantité supèrieure à 0 svp")
+      }
+      
     });
   });
 };
